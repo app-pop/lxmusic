@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { FlatList, TouchableOpacity, View } from 'react-native'
 import Text from '@/components/common/Text'
 import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import { readMusicDownloadDirectory, removeMusicDownloadTarget } from '@/utils/fs'
@@ -11,25 +11,30 @@ import { sizeFormate } from '@/utils'
 import { getDownloadTasks, removeDownloadTask } from '@/core/music/downloader'
 import { handleFileMusicAction } from '@/core/init/deeplink/fileAction'
 
-const ProgressBar = ({ progress }) => {
+const ProgressBar = memo(({ progress }) => {
   const theme = useTheme()
   return (
     <View style={[styles.progressTrack, { backgroundColor: theme['c-primary-light-800-alpha-500'] }]}>
       <View style={[styles.progressBar, { width: `${Math.max(0, Math.min(progress, 1)) * 100}%`, backgroundColor: theme['c-primary'] }]} />
     </View>
   )
-}
+})
 
-const ActionButton = ({ label, onPress, danger = false }) => {
+const IconAction = memo(({ name, onPress, onLongPress, danger = false }) => {
   const theme = useTheme()
   return (
-    <TouchableOpacity style={[styles.actionBtn, { backgroundColor: danger ? theme['c-primary-background-hover'] : theme['c-button-background'] }]} onPress={onPress} activeOpacity={0.75}>
-      <Text size={11} color={danger ? theme['c-font'] : theme['c-button-font']}>{label}</Text>
+    <TouchableOpacity
+      style={[styles.iconBtn, { backgroundColor: danger ? theme['c-primary-background-hover'] : theme['c-button-background'] }]}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      activeOpacity={0.75}
+    >
+      <Icon name={name} size={14} color={danger ? theme['c-font'] : theme['c-button-font']} />
     </TouchableOpacity>
   )
-}
+})
 
-const DownloadRow = ({ item, onPlay, onRemoveRecord, onRemoveFile }) => {
+const DownloadRow = memo(({ item, onPlay, onRemoveRecord, onRemoveFile }) => {
   const theme = useTheme()
   const sizeText = useMemo(() => {
     if (item.total > 0) return `${sizeFormate(item.downloaded || 0)} / ${sizeFormate(item.total)}`
@@ -38,6 +43,7 @@ const DownloadRow = ({ item, onPlay, onRemoveRecord, onRemoveFile }) => {
   }, [item.downloaded, item.size, item.total])
   const isRunning = item.status === 'run' || item.status === 'waiting'
   const isCompleted = item.status === 'completed'
+  const subtitle = [item.quality, item.statusText || item.status, sizeText].filter(Boolean).join(' · ')
 
   return (
     <View style={[
@@ -50,19 +56,23 @@ const DownloadRow = ({ item, onPlay, onRemoveRecord, onRemoveFile }) => {
       <Icon name="music" size={16} color={isCompleted ? theme['c-primary-font-active'] : theme['c-primary-font']} />
       <View style={styles.rowCenter}>
         <Text numberOfLines={1}>{item.name}</Text>
-        <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
-          {[item.quality, item.statusText || item.status, sizeText].filter(Boolean).join(' · ')}
-        </Text>
+        <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{subtitle}</Text>
         {isRunning ? <ProgressBar progress={item.progress || 0} /> : null}
       </View>
       <View style={styles.rowActions}>
-        {isCompleted ? <ActionButton label="播放" onPress={() => { void onPlay(item) }} /> : null}
-        {item.taskId ? <ActionButton label="删记录" onPress={() => { void onRemoveRecord(item) }} danger={!isCompleted} /> : null}
-        {item.path ? <ActionButton label="删文件" onPress={() => { void onRemoveFile(item) }} danger /> : null}
+        {isCompleted ? <IconAction name="play-outline" onPress={() => { void onPlay(item) }} /> : null}
+        {item.path
+          ? <IconAction
+              name="remove"
+              danger
+              onPress={() => { void onRemoveRecord(item) }}
+              onLongPress={() => { void onRemoveFile(item) }}
+            />
+          : null}
       </View>
     </View>
   )
-}
+})
 
 export default () => {
   const t = (key, options) => global.i18n.t(key, options)
@@ -72,8 +82,8 @@ export default () => {
   const [files, setFiles] = useState([])
   const [tasks, setTasks] = useState([])
 
-  const refresh = useCallback(async() => {
-    setLoading(true)
+  const refresh = useCallback(async(showLoading = false) => {
+    if (showLoading) setLoading(true)
     try {
       const taskList = getDownloadTasks()
       const fileList = await readMusicDownloadDirectory()
@@ -83,20 +93,20 @@ export default () => {
       setTasks(getDownloadTasks())
       setFiles([])
     } finally {
-      setLoading(false)
+      if (showLoading) setLoading(false)
     }
   }, [])
 
   useEffect(() => {
     if (navActiveId == 'nav_download') {
-      refresh().catch(() => {})
+      refresh(true).catch(() => {})
     }
   }, [navActiveId, refresh])
 
   useEffect(() => {
     const handleDownloadListUpdate = () => {
       if (navActiveId == 'nav_download') {
-        refresh().catch(() => {})
+        refresh(false).catch(() => {})
       }
     }
     global.app_event.on('downloadListUpdate', handleDownloadListUpdate)
@@ -139,7 +149,7 @@ export default () => {
   }, [files, tasks])
 
   const handleRefreshPress = () => {
-    refresh()
+    refresh(false)
       .then(() => {
         toast(t('download_refreshed'))
       })
@@ -152,13 +162,17 @@ export default () => {
   }
 
   const handleRemoveRecord = async(item) => {
-    if (!item.taskId) return
-    if (!await confirmDialog({
-      title: '删除下载记录',
-      message: `确定删除 ${item.name} 的下载记录吗？`,
-    })) return
-    await removeDownloadTask(item.taskId, false)
-    await refresh()
+    if (item.taskId) {
+      if (!await confirmDialog({
+        title: '删除下载记录',
+        message: `确定删除 ${item.name} 的下载记录吗？\n长按删除按钮可直接删除文件。`,
+      })) return
+      await removeDownloadTask(item.taskId, false)
+    } else {
+      await handleRemoveFile(item)
+      return
+    }
+    await refresh(false)
   }
 
   const handleRemoveFile = async(item) => {
@@ -173,7 +187,7 @@ export default () => {
       await removeMusicDownloadTarget(item.path)
       global.app_event.downloadListUpdate()
     }
-    await refresh()
+    await refresh(false)
   }
 
   return (
@@ -187,23 +201,27 @@ export default () => {
           <Text size={12}>{t('download_refresh')}</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView contentContainerStyle={styles.list}>
-        {
-          isLoading
-            ? <Text style={styles.tip} color={theme['c-font-label']}>{t('download_loading')}</Text>
-            : mergedList.length
-              ? mergedList.map(item => (
-                <DownloadRow
-                  key={item.key}
-                  item={item}
-                  onPlay={handlePlay}
-                  onRemoveRecord={handleRemoveRecord}
-                  onRemoveFile={handleRemoveFile}
-                />
-              ))
-              : <Text style={styles.tip} color={theme['c-font-label']}>{t('download_empty')}</Text>
-        }
-      </ScrollView>
+      {
+        isLoading
+          ? <Text style={styles.tip} color={theme['c-font-label']}>{t('download_loading')}</Text>
+          : mergedList.length
+            ? (
+              <FlatList
+                data={mergedList}
+                contentContainerStyle={styles.list}
+                keyExtractor={item => item.key}
+                renderItem={({ item }) => (
+                  <DownloadRow
+                    item={item}
+                    onPlay={handlePlay}
+                    onRemoveRecord={handleRemoveRecord}
+                    onRemoveFile={handleRemoveFile}
+                  />
+                )}
+              />
+            )
+            : <Text style={styles.tip} color={theme['c-font-label']}>{t('download_empty')}</Text>
+      }
     </View>
   )
 }
@@ -250,16 +268,16 @@ const styles = createStyle({
   },
   rowActions: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
     marginLeft: 8,
   },
-  actionBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 8,
+  iconBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginLeft: 6,
-    marginTop: 4,
   },
   progressTrack: {
     height: 4,
