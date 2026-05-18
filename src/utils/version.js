@@ -7,6 +7,9 @@ import { APP_PROVIDER_NAME } from '@/config/constant'
 // fork：检查更新只看自己的仓库；GitHub 仓库 slug 仍保持 package.json 的 name（lx-music-mobile）
 const FORK_OWNER = 'Pride-lee'
 const FORK_REPO = name
+const FORK_UPDATE_BRANCH = 'xiaomi'
+const RELEASE_TAG_SUFFIX = '-xiaomi'
+const RELEASE_ASSET_SUFFIX = '-xiaomi'
 
 const abis = [
   'arm64-v8a',
@@ -17,10 +20,10 @@ const abis = [
 ]
 
 const address = [
-  [`https://raw.githubusercontent.com/${FORK_OWNER}/${FORK_REPO}/master/publish/version.json`, 'direct'],
-  [`https://cdn.jsdelivr.net/gh/${FORK_OWNER}/${FORK_REPO}/publish/version.json`, 'direct'],
-  [`https://fastly.jsdelivr.net/gh/${FORK_OWNER}/${FORK_REPO}/publish/version.json`, 'direct'],
-  [`https://gcore.jsdelivr.net/gh/${FORK_OWNER}/${FORK_REPO}/publish/version.json`, 'direct'],
+  [`https://raw.githubusercontent.com/${FORK_OWNER}/${FORK_REPO}/${FORK_UPDATE_BRANCH}/publish/version.json`, 'direct'],
+  [`https://cdn.jsdelivr.net/gh/${FORK_OWNER}/${FORK_REPO}@${FORK_UPDATE_BRANCH}/publish/version.json`, 'direct'],
+  [`https://fastly.jsdelivr.net/gh/${FORK_OWNER}/${FORK_REPO}@${FORK_UPDATE_BRANCH}/publish/version.json`, 'direct'],
+  [`https://gcore.jsdelivr.net/gh/${FORK_OWNER}/${FORK_REPO}@${FORK_UPDATE_BRANCH}/publish/version.json`, 'direct'],
 ]
 
 
@@ -86,7 +89,7 @@ let apkSavePath
 
 export const downloadNewVersion = async(version, onDownload = noop) => {
   const abi = await getTargetAbi()
-  const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}/${FORK_REPO}-v${version}-${abi}.apk`
+  const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}${RELEASE_TAG_SUFFIX}/${FORK_REPO}-v${version}-${abi}${RELEASE_ASSET_SUFFIX}.apk`
   let savePath = temporaryDirectoryPath + '/lx-music-mobile.apk'
 
   if (downloadJobId) stopDownload(downloadJobId)
