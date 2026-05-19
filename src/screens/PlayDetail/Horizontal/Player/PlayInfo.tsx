@@ -3,11 +3,12 @@ import { StyleSheet, View } from 'react-native'
 
 import Progress from '@/components/player/Progress'
 import Status from './Status'
-import { useProgress } from '@/store/player/hook'
+import { usePlayerMusicInfo, useProgress } from '@/store/player/hook'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { useBufferProgress } from '@/plugins/player'
+import Badge from '@/components/common/Badge'
 
 // const FONT_SIZE = 13
 
@@ -24,6 +25,7 @@ const PlayTimeMax = memo(({ timeStr }: { timeStr: string }) => {
 
 export default () => {
   const theme = useTheme()
+  const playerMusicInfo = usePlayerMusicInfo()
   const { maxPlayTimeStr, nowPlayTimeStr, progress, maxPlayTime } = useProgress()
   const buffered = useBufferProgress()
   // console.log('render playInfo')
@@ -34,6 +36,7 @@ export default () => {
         <Status />
       </View>
       <View style={{ flexGrow: 0, flexShrink: 0, flexDirection: 'row' }} >
+        {playerMusicInfo.quality ? <Badge type="tertiary">{playerMusicInfo.quality}</Badge> : null}
         <PlayTimeCurrent timeStr={nowPlayTimeStr} />
         <Text color={theme['c-500']}> / </Text>
         <PlayTimeMax timeStr={maxPlayTimeStr} />

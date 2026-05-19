@@ -14,6 +14,7 @@ import IsShowLyricRoma from './IsShowLyricRoma'
 import IsS2T from './IsS2T'
 import MaxCache from './MaxCache'
 import { useI18n } from '@/lang'
+import Download from '../Download'
 
 
 export default memo(() => {
@@ -33,6 +34,7 @@ export default memo(() => {
       <IsS2T />
       <MaxCache />
       <PlayHighQuality />
+      <Download />
     </Section>
   )
 })

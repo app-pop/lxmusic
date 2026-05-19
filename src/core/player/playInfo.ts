@@ -79,6 +79,7 @@ export const resetPlayerMusicInfo = () => {
     rlrc: null,
     lxlrc: null,
     rawlrc: null,
+    quality: null,
     name: '',
     singer: '',
     album: '',
@@ -90,6 +91,7 @@ const setPlayerMusicInfo = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
     setMusicInfo('progress' in musicInfo ? {
       id: musicInfo.id,
       pic: musicInfo.metadata.musicInfo.meta.picUrl,
+      quality: musicInfo.metadata.quality,
       name: musicInfo.metadata.musicInfo.name,
       singer: musicInfo.metadata.musicInfo.singer,
       album: musicInfo.metadata.musicInfo.meta.albumName ?? '',
@@ -101,6 +103,7 @@ const setPlayerMusicInfo = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
     } : {
       id: musicInfo.id,
       pic: musicInfo.meta.picUrl,
+      quality: null,
       name: musicInfo.name,
       singer: musicInfo.singer,
       album: musicInfo.meta.albumName ?? '',

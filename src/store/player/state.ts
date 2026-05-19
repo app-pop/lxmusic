@@ -57,6 +57,7 @@ const state: InitState = {
     rlrc: null,
     lxlrc: null,
     rawlrc: null,
+    quality: null,
     // url: null,
     name: '',
     singer: '',

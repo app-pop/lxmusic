@@ -26,12 +26,17 @@ jobs:
       - name: Build Packages
         env:
           DISABLE_SVG: 1
+          KEYSTORE_STORE_FILE_BASE64: ${{ secrets.MASTER_KEYSTORE_STORE_FILE_BASE64 || secrets.KEYSTORE_STORE_FILE_BASE64 }}
+          KEYSTORE_STORE_FILE: ${{ secrets.MASTER_KEYSTORE_STORE_FILE || secrets.KEYSTORE_STORE_FILE }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.MASTER_KEYSTORE_KEY_ALIAS || secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.MASTER_KEYSTORE_PASSWORD || secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.MASTER_KEYSTORE_KEY_PASSWORD || secrets.KEYSTORE_KEY_PASSWORD }}
         shell: bash
         run: |
           cd android
-          echo ${{ secrets.KEYSTORE_STORE_FILE_BASE64 }} | base64 --decode > app/${{ secrets.KEYSTORE_STORE_FILE }}
-          ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE='${{ secrets.KEYSTORE_STORE_FILE }}' -PMYAPP_UPLOAD_KEY_ALIAS='${{ secrets.KEYSTORE_KEY_ALIAS }}' -PMYAPP_UPLOAD_STORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}' -PMYAPP_UPLOAD_KEY_PASSWORD='${{ secrets.KEYSTORE_KEY_PASSWORD }}'
-          rm -f app/${{ secrets.KEYSTORE_STORE_FILE }}
+          echo "$KEYSTORE_STORE_FILE_BASE64" | base64 --decode > "app/$KEYSTORE_STORE_FILE"
+          ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE="$KEYSTORE_STORE_FILE" -PMYAPP_UPLOAD_KEY_ALIAS="$KEYSTORE_KEY_ALIAS" -PMYAPP_UPLOAD_STORE_PASSWORD="$KEYSTORE_PASSWORD" -PMYAPP_UPLOAD_KEY_PASSWORD="$KEYSTORE_KEY_PASSWORD"
+          rm -f "app/$KEYSTORE_STORE_FILE"
 
       # Push tag to GitHub if package.json version's tag is not tagged
       - name: Get package version

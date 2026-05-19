@@ -11,6 +11,7 @@ declare global {
         rlrc: string | null
         lxlrc: string | null
         rawlrc: string | null
+        quality: LX.Quality | null
         // url: string | null
         name: string
         singer: string

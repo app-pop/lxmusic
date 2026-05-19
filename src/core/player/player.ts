@@ -20,6 +20,7 @@ import {
   removeTempPlayList,
 } from '@/core/player/tempPlayList'
 import { getMusicUrl, getPicPath, getLyricInfo } from '@/core/music'
+import { getPlayQuality } from '@/core/music/utils'
 import { requestMsg } from '@/utils/message'
 import { getRandom } from '@/utils/common'
 import { filterList } from './utils'
@@ -69,6 +70,12 @@ const createGettingUrlId = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
 const diffCurrentMusicInfo = (curMusicInfo: LX.Music.MusicInfo | LX.Download.ListItem): boolean => {
   // return curMusicInfo !== playerState.playMusicInfo.musicInfo || playerState.isPlay
   return createGettingUrlId(curMusicInfo) != global.lx.gettingUrlId || curMusicInfo.id != playerState.playMusicInfo.musicInfo?.id || playerState.isPlay
+}
+
+const getCurrentMusicQuality = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem): LX.Quality | null => {
+  if ('progress' in musicInfo) return musicInfo.metadata.quality
+  if (musicInfo.source == 'local') return null
+  return getPlayQuality(settingState.setting['player.playQuality'], musicInfo)
 }
 
 let cancelDelayRetry: (() => void) | null = null
@@ -139,6 +146,7 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
   global.lx.gettingUrlId = createGettingUrlId(musicInfo)
   void getMusicPlayUrl(musicInfo, isRefresh).then((url) => {
     if (!url) return
+    setMusicInfo({ quality: getCurrentMusicQuality(musicInfo) })
     setResource(musicInfo, url, playerState.progress.nowPlayTime)
   }).catch((err: any) => {
     console.log(err)

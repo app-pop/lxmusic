@@ -3,10 +3,11 @@ import { View, StyleSheet } from 'react-native'
 
 import Progress, { ProgressPlain } from '@/components/player/Progress'
 import Status from './Status'
-import { useProgress } from '@/store/player/hook'
+import { usePlayerMusicInfo, useProgress } from '@/store/player/hook'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
+import Badge from '@/components/common/Badge'
 import { COMPONENT_IDS } from '@/config/constant'
 import { usePageVisible } from '@/store/common/hook'
 import { scaleSizeH, scaleSizeW, scaleSizeWR } from '@/utils/pixelRatio'
@@ -33,6 +34,7 @@ const PlayTimeMax = memo(({ timeStr }: { timeStr: string }) => {
 export default ({ isHome }: { isHome: boolean }) => {
   const theme = useTheme()
   const [autoUpdate, setAutoUpdate] = useState(true)
+  const playerMusicInfo = usePlayerMusicInfo()
   const { maxPlayTimeStr, nowPlayTimeStr, progress, maxPlayTime } = useProgress(autoUpdate)
   const buffered = useBufferProgress()
   const allowProgressBarSeek = useSettingValue('common.allowProgressBarSeek')
@@ -48,6 +50,7 @@ export default ({ isHome }: { isHome: boolean }) => {
         <Status autoUpdate={autoUpdate} />
       </View>
       <View style={{ flexGrow: 0, flexShrink: 0, flexDirection: 'row', alignItems: 'flex-start' }} >
+        {playerMusicInfo.quality ? <Badge type="tertiary">{playerMusicInfo.quality}</Badge> : null}
         <PlayTimeCurrent timeStr={nowPlayTimeStr} />
         <Text size={FONT_SIZE} color={theme['c-500']}> / </Text>
         <PlayTimeMax timeStr={maxPlayTimeStr} />
