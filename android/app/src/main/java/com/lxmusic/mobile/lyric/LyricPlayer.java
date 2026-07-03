@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.lyric;
+package com.kugou.android.lyric;
 
 import java.util.ArrayList;
 import java.util.Collections;

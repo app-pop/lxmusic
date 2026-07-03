@@ -1,4 +1,4 @@
-package com.lxmusic.mobile;
+package com.kugou.android;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.flipper.ReactNativeFlipper;
@@ -9,11 +9,11 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import java.util.List;
 
-import com.lxmusic.mobile.cache.CachePackage;
-import com.lxmusic.mobile.crypto.CryptoPackage;
-import com.lxmusic.mobile.lyric.LyricPackage;
-import com.lxmusic.mobile.userApi.UserApiPackage;
-import com.lxmusic.mobile.utils.UtilsPackage;
+import com.kugou.android.cache.CachePackage;
+import com.kugou.android.crypto.CryptoPackage;
+import com.kugou.android.lyric.LyricPackage;
+import com.kugou.android.userApi.UserApiPackage;
+import com.kugou.android.utils.UtilsPackage;
 
 public class MainApplication extends NavigationApplication {
 

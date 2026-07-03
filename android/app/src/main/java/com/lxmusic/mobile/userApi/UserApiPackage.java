@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.userApi;
+package com.kugou.android.userApi;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;

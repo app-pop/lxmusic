@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.cache;
+package com.kugou.android.cache;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;

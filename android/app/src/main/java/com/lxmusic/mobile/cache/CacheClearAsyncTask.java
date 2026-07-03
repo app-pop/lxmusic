@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.cache;
+package com.kugou.android.cache;
 
 import android.os.AsyncTask;
 

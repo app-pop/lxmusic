@@ -14,7 +14,7 @@
 
 <p align="center">一个基于 React Native 开发的音乐软件</p>
 
-## 关于本仓库（Pride-lee / [lx-music-mobile](https://github.com/app-pop/lxmusic)）
+## 关于本仓库（app-pop / [lx-music-mobile](https://github.com/app-pop/lxmusic)）
 
 本仓库在 **[lyswhut/lx-music-mobile](https://github.com/lyswhut/lx-music-mobile)** 上游基础上，合并他人分支后做了功能与体验向的修改。**Release 与 Issue 请以本仓库为准**；上游更新可通过 `git remote add upstream …` 后自行 `fetch` / `merge`。
 

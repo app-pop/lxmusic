@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.lyric;
+package com.kugou.android.lyric;
 
 import androidx.annotation.Nullable;
 

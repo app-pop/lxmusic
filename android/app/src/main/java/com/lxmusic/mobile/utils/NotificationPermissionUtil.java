@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.utils;
+package com.kugou.android.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

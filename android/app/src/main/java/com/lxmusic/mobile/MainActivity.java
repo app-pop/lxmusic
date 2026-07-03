@@ -1,4 +1,4 @@
-package com.lxmusic.mobile;
+package com.kugou.android;
 
 import com.reactnativenavigation.NavigationActivity;
 import com.facebook.react.ReactActivityDelegate;

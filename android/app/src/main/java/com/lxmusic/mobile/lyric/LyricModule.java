@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.lyric;
+package com.kugou.android.lyric;
 
 import android.content.Intent;
 import android.net.Uri;

@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.crypto;
+package com.kugou.android.crypto;
 
 import android.util.Base64;
 

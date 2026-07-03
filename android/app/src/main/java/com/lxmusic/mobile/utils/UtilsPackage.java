@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.utils;
+package com.kugou.android.utils;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;

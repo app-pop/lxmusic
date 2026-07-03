@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.lyric;
+package com.kugou.android.lyric;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.lxmusic.mobile.R;
+import com.kugou.android.R;
 
 public class LyricView extends Activity implements View.OnTouchListener {
   LyricSwitchView textView = null;

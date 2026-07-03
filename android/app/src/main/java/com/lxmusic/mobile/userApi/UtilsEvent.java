@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.userApi;
+package com.kugou.android.userApi;
 
 import android.util.Log;
 

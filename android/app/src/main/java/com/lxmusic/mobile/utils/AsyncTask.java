@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.utils;
+package com.kugou.android.utils;
 
 import android.os.Handler;
 import android.os.Looper;

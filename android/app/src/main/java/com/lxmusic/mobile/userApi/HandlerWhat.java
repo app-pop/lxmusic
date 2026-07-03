@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.userApi;
+package com.kugou.android.userApi;
 
 public class HandlerWhat {
   public static final int ACTION = 1000;

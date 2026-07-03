@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.cache;
+package com.kugou.android.cache;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -7,9 +7,9 @@ import com.facebook.react.bridge.ReactMethod;
 
 import java.io.File;
 
-import static com.lxmusic.mobile.cache.Utils.clearCacheFolder;
-import static com.lxmusic.mobile.cache.Utils.getDirSize;
-import static com.lxmusic.mobile.cache.Utils.isMethodsCompat;
+import static com.kugou.android.cache.Utils.clearCacheFolder;
+import static com.kugou.android.cache.Utils.getDirSize;
+import static com.kugou.android.cache.Utils.isMethodsCompat;
 
 // https://github.com/midas-gufei/react-native-clear-app-cache/tree/master/android/src/main/java/com/learnta/clear
 public class CacheModule extends ReactContextBaseJavaModule {

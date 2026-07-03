@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.lyric;
+package com.kugou.android.lyric;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

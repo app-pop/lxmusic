@@ -1,4 +1,4 @@
-package com.lxmusic.mobile.userApi;
+package com.kugou.android.userApi;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -6,8 +6,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
-import com.lxmusic.mobile.crypto.AES;
-import com.lxmusic.mobile.crypto.RSA;
+import com.kugou.android.crypto.AES;
+import com.kugou.android.crypto.RSA;
 import com.facebook.react.bridge.ReactApplicationContext;
 
 import com.whl.quickjs.android.QuickJSLoader;
