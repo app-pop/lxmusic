@@ -20,13 +20,13 @@ export default memo(() => {
   const theme = useTheme()
   const t = useI18n()
   const openHomePage = () => {
-    void openUrl('https://github.com/Pride-lee/lx-music-mobile#readme')
+    void openUrl('https://github.com/app-pop/lxmusic#readme')
   }
   const openIssuePage = () => {
-    void openUrl('https://github.com/Pride-lee/lx-music-mobile/issues?q=is%3Aissue+')
+    void openUrl('https://github.com/app-pop/lxmusic/issues?q=is%3Aissue+')
   }
   const openGHReleasePage = () => {
-    void openUrl('https://github.com/Pride-lee/lx-music-mobile/releases')
+    void openUrl('https://github.com/app-pop/lxmusic/releases')
   }
   const openFAQPage = () => {
     void openUrl('https://lyswhut.github.io/lx-music-doc/mobile/faq')
@@ -35,7 +35,7 @@ export default memo(() => {
     showPactModal()
   }
   const openPartPage = () => {
-    void openUrl('https://github.com/Pride-lee/lx-music-mobile#%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%AE%AE')
+    void openUrl('https://github.com/app-pop/lxmusic#%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%AE%AE')
   }
 
   // const goToQQGroup = () => {
@@ -62,7 +62,7 @@ export default memo(() => {
       <View style={styles.part}>
         <Text style={styles.text} >本软件完全免费，代码已开源。开源地址：</Text>
         <TouchableOpacity onPress={openHomePage}>
-          <Text style={textLinkStyle}>https://github.com/Pride-lee/lx-music-mobile</Text>
+          <Text style={textLinkStyle}>https://github.com/app-pop/lxmusic</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.part}>
