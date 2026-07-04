@@ -115,7 +115,7 @@ jobs:
 
           本版本与 master 主线差异：
           - \`applicationId\` 改为 \`com.kugou.android\`，伪装酷狗音乐以绕过部分系统白名单
-          - 与酷狗音乐互斥；从主线版本（com.lxmusic.mobile）升级无需卸载再重装，可共存。
+          - 与酷狗音乐互斥；从主线版本（com.tencent.qqmusic）升级无需卸载再重装，可共存。
 
           ## File MD5
           \`\`\`

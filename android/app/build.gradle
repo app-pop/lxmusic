@@ -108,9 +108,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.lxmusic.mobile"
+    namespace "com.tencent.qqmusic"
     defaultConfig {
-        applicationId "com.lxmusic.mobile"
+        applicationId "com.tencent.qqmusic"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode verCode
