@@ -115,7 +115,7 @@ jobs:
 
           本版本与 master 主线差异：
           - \`applicationId\` 改为 \`com.netease.cloudmusic\`，伪装网易云音乐以绕过部分系统白名单
-          - 与汽水音乐互斥；从主线版本（com.lxmusic.mobile）升级不需要先卸载再重装，可共存。
+          - 与网易云音乐互斥；从主线版本（com.lxmusic.mobile）升级不需要先卸载再重装，可共存。
 
           ## File MD5
           \`\`\`
