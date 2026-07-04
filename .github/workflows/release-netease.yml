@@ -114,7 +114,7 @@ jobs:
           # LHX Music v${PACKAGE_VERSION} (网易云音乐版)
 
           本版本与 master 主线差异：
-          - \`applicationId\` 改为 \`com.netease.cloudmusic\`，伪装汽水音乐以绕过小米/MIUI 后屏白名单
+          - \`applicationId\` 改为 \`com.netease.cloudmusic\`，伪装网易云音乐以绕过部分系统白名单
           - 与汽水音乐互斥；从主线版本（com.lxmusic.mobile）升级不需要先卸载再重装，可共存。
 
           ## File MD5
@@ -131,7 +131,7 @@ jobs:
           prerelease: false
           draft: false
           tag_name: v${{ env.PACKAGE_VERSION }}-netease
-          name: LHX Music v${{ env.PACKAGE_VERSION }} (网易云音乐版版)
+          name: LHX Music v${{ env.PACKAGE_VERSION }} (网易云音乐版)
           files: |
             artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-arm64-v8a-netease.apk
             artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-armeabi-v7a-netease.apk
