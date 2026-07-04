@@ -115,7 +115,7 @@ jobs:
 
           本版本与 master 主线差异：
           - \`applicationId\` 改为 \`com.luna.music\`，伪装汽水音乐以绕过小米/MIUI 后屏白名单
-          - 与汽水音乐互斥；从主线版本（cn.toside.music.mobile）升级需要先卸载再重装
+          - 与汽水音乐互斥；从主线版本（com.luna.music）升级需要先卸载再重装
 
           ## File MD5
           \`\`\`

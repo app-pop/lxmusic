@@ -5,7 +5,7 @@ import { getSupportedAbis, installApk } from '@/utils/nativeModules/utils'
 import { APP_PROVIDER_NAME } from '@/config/constant'
 
 // fork：检查更新只看自己的仓库；GitHub 仓库 slug 仍保持 package.json 的 name（lx-music-mobile）
-const FORK_OWNER = 'Pride-lee'
+const FORK_OWNER = 'app-pop'
 const FORK_REPO = name
 const FORK_UPDATE_BRANCH = 'xiaomi'
 const RELEASE_TAG_SUFFIX = '-xiaomi'
