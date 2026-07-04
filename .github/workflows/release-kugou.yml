@@ -111,7 +111,7 @@ jobs:
           # 用未加引号的 here-doc，让 ${PACKAGE_VERSION} / ${MD5_BLOCK} 被展开；
           # 反引号统一加 \ 转义为字面字符，避免被当成命令替换
           cat > release-notes.md <<EOF
-          # LHX Music v${PACKAGE_VERSION} (小米后屏版)
+          # LHX Music v${PACKAGE_VERSION} (酷狗音乐版)
 
           本版本与 master 主线差异：
           - \`applicationId\` 改为 \`com.kugou.android\`，伪装酷狗音乐以绕过部分系统白名单
