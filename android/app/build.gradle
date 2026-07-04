@@ -108,9 +108,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.lxmusic.mobile"
+    namespace "cn.kuwo.music.tv"
     defaultConfig {
-        applicationId "com.lxmusic.mobile"
+        applicationId "cn.kuwo.music.tv"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode verCode

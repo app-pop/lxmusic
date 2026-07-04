@@ -95,7 +95,7 @@ export const storageDataPrefixOld = {
   notificationTipEnable: '@notification_tip_enable',
 } as const
 
-export const APP_PROVIDER_NAME = 'com.lxmusic.mobile.provider'
+export const APP_PROVIDER_NAME = 'cn.kuwo.music.tv.provider'
 
 
 export const NAV_MENUS = [
