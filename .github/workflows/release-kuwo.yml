@@ -1,21 +1,21 @@
-name: Build (Kugou)
+name: Build (Kuwo)
 
-# 仅 kugou 分支专用打包流程：
-#   - 触发：push 到 kugou / 手动触发
-#   - 产物 APK 名加 -kugou 后缀，避免与主线（master）的同名 APK 冲突
-#   - tag / release 名形如 v{version}-kugou
+# 仅 kuwo 分支专用打包流程：
+#   - 触发：push 到 kuwo / 手动触发
+#   - 产物 APK 名加 -kuwo 后缀，避免与主线（master）的同名 APK 冲突
+#   - tag / release 名形如 v{version}-kuwo
 #
 # 与主线版本的区别：
-#   - applicationId 为 com.kugou.android（伪装"酷狗音乐"，用于绕过部分系统白名单）
+#   - applicationId 为 com.luna.music（伪装"汽水音乐"，用于绕过小米/MIUI 后屏白名单）
 #   - 与汽水音乐互斥；从主线版本升级需卸载重装
 #
-# 注意：本文件同时存在于 master 与 kugou 分支，但 trigger 只对 kugou 分支的 push 生效，
-#       master 上保留只是为了让 sync-master-to-kugou 流程可以一并同步过去。
+# 注意：本文件同时存在于 master 与 kuwo 分支，但 trigger 只对 kuwo 分支的 push 生效，
+#       master 上保留只是为了让 sync-master-to-kuwo 流程可以一并同步过去。
 
 on:
   push:
     branches:
-      - kugou
+      - kuwo
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   Android:
-    name: Android (Kugou)
+    name: Android (Kuwo)
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -49,41 +49,41 @@ jobs:
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
 
-      # 把构建产物 lx-music-mobile-v{ver}-{abi}.apk 重命名为 lx-music-mobile-v{ver}-{abi}-kugou.apk
+      # 把构建产物 lx-music-mobile-v{ver}-{abi}.apk 重命名为 lx-music-mobile-v{ver}-{abi}-kuwo.apk
       # 避免与 master 分支同版本的 release 资源冲突
-      - name: Rename APKs (add -kugou suffix)
+      - name: Rename APKs (add -kuwo suffix)
         shell: bash
         run: |
           cd android/app/build/outputs/apk/release
           for f in lx-music-mobile-v${{ env.PACKAGE_VERSION }}-*.apk; do
             [ -e "$f" ] || continue
             base=${f%.apk}
-            mv "$f" "${base}-kugou.apk"
+            mv "$f" "${base}-kuwo.apk"
           done
           ls -la
 
       - name: Generate file MD5
         run: |
           cd android/app/build/outputs/apk/release
-          md5sum *-kugou.apk
+          md5sum *-kuwo.apk
 
       - name: Create git tag
         uses: pkgdeps/git-tag-action@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_repo: ${{ github.repository }}
-          version: ${{ env.PACKAGE_VERSION }}-kugou
+          version: ${{ env.PACKAGE_VERSION }}-kuwo
           git_commit_sha: ${{ github.sha }}
           git_tag_prefix: "v"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: kugou-v${{ env.PACKAGE_VERSION }}
-          path: android/app/build/outputs/apk/release/*-kugou.apk
+          name: kuwo-v${{ env.PACKAGE_VERSION }}
+          path: android/app/build/outputs/apk/release/*-kuwo.apk
 
   Release:
-    name: Release (Kugou)
+    name: Release (Kuwo)
     runs-on: ubuntu-latest
     needs: [Android]
     permissions:
@@ -107,15 +107,15 @@ jobs:
         shell: bash
         run: |
           PACKAGE_VERSION="${{ env.PACKAGE_VERSION }}"
-          MD5_BLOCK=$(cd artifacts && md5sum *-kugou.apk)
+          MD5_BLOCK=$(cd artifacts && md5sum *-kuwo.apk)
           # 用未加引号的 here-doc，让 ${PACKAGE_VERSION} / ${MD5_BLOCK} 被展开；
           # 反引号统一加 \ 转义为字面字符，避免被当成命令替换
           cat > release-notes.md <<EOF
-          # LHX Music v${PACKAGE_VERSION} (酷狗音乐版)
+          # LHX Music v${PACKAGE_VERSION} (酷我音乐机车/TV版版)
 
           本版本与 master 主线差异：
-          - \`applicationId\` 改为 \`com.kugou.android\`，伪装酷狗音乐以绕过部分系统白名单
-          - 与酷狗音乐互斥；从主线版本（cn.kuwo.music.tv）升级无需卸载再重装，可共存。
+          - \`applicationId\` 改为 \`com.kuwo.music.tv\`，伪装酷我音乐以绕过部分系统白名单
+          - 与酷我音乐互斥；从主线版本（cn.lxmusic.mobile）升级不需要先卸载再重装，可共存。
 
           ## File MD5
           \`\`\`
@@ -130,13 +130,13 @@ jobs:
           body_path: ./release-notes.md
           prerelease: false
           draft: false
-          tag_name: v${{ env.PACKAGE_VERSION }}-kugou
-          name: LHX Music v${{ env.PACKAGE_VERSION }} (酷狗音乐版)
+          tag_name: v${{ env.PACKAGE_VERSION }}-kuwo
+          name: LHX Music v${{ env.PACKAGE_VERSION }} (酷我音乐机车/TV版)
           files: |
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-arm64-v8a-kugou.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-armeabi-v7a-kugou.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86_64-kugou.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86-kugou.apk
-            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-universal-kugou.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-arm64-v8a-kuwo.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-armeabi-v7a-kuwo.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86_64-kuwo.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-x86-kuwo.apk
+            artifacts/lx-music-mobile-v${{ env.PACKAGE_VERSION }}-universal-kuwo.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
