@@ -130,7 +130,17 @@ jobs:
         env:
           BRANCH: ${{ matrix.branch }}
         run: |
-          if ! node scripts/sync/verify.js "$BRANCH"; then
+          set +e
+          OUT=$(node scripts/sync/verify.js "$BRANCH" 2>&1)
+          CODE=$?
+          echo "$OUT"
+          {
+            echo "### Verify \`$BRANCH\` (exit $CODE)"
+            echo '```'
+            echo "$OUT"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+          if [ $CODE -ne 0 ]; then
             echo "::error::分支定制校验失败，不推送（需人工处理）"
             exit 1
           fi

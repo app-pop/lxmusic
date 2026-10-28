@@ -105,6 +105,13 @@ for (const wf of ['release.yml', 'sync-upstream.yml', 'sync-master-to-xiaomi.yml
 if (errors.length > 0) {
   console.error(`校验失败 (${branch}):`)
   for (const e of errors) console.error(`  - ${e}`)
+  // 便于在 CI 中定位：输出当前工作区状态
+  try {
+    console.error('--- 诊断 ---')
+    console.error('工作流目录:', fs.readdirSync('.github/workflows').join(', '))
+    console.error('scripts 目录存在:', fs.existsSync('scripts/sync'))
+    console.error(execFileSync('git', ['status', '--short'], { encoding: 'utf8' }))
+  } catch { /* 忽略诊断失败 */ }
   process.exit(1)
 }
 
