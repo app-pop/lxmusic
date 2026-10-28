@@ -1,4 +1,4 @@
-import { version } from '../../package.json'
+import { APP_VERSION } from '@/config/constant'
 import { createAppEventHub } from '@/event/appEvent'
 import { createListEventHub } from '@/event/listEvent'
 import { createDislikeEventHub } from '@/event/dislikeEvent'
@@ -6,9 +6,9 @@ import { createStateEventHub } from '@/event/stateEvent'
 if (process.versions == null) {
   // @ts-expect-error
   process.versions = {
-    app: version,
+    app: APP_VERSION,
   }
-} else process.versions.app = version
+} else process.versions.app = APP_VERSION
 
 // global.i18n = null
 
