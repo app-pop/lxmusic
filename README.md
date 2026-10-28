@@ -117,11 +117,6 @@ git merge upstream/master   # 或 git rebase upstream/master
 2. 克隆本仓库代码并切换至 `dev` 分支进行开发；
 3. 提交 PR 至 `dev` 分支。
 
-<!--
-## 用户界面
-
-<p><img width="100%" src="https://github.com/app-pop/lxmusic/blob/master/doc/images/app.png" alt="lx-music mobile UI"></p> -->
-
 ## 项目协议
 
 本项目基于 [Apache License 2.0](https://github.com/app-pop/lxmusic/blob/master/LICENSE) 许可证发行，以下协议是对于 Apache License 2.0 的补充，如有冲突，以以下协议为准。
