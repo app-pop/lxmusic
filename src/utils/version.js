@@ -90,8 +90,8 @@ let apkSavePath
 
 export const downloadNewVersion = async(version, onDownload = noop) => {
   const abi = await getTargetAbi()
-  // version 为分支发布版本号（如 1.9.1-qqmusic），Release tag 即 v{version}；
-  // 但构建产物的 APK 名是 {name}-v{基础版本}-{abi}{后缀}.apk（后缀在 ABI 之后），
+  // version 为分支发布版本号（如 1.9.2-qqmusic），Release tag 即 v${version}；
+  // 但构建产物的 APK 名是 {name}-v{基础版本}-{abi}-qqmusic.apk（后缀在 ABI 之后），
   // 因此需要把版本号里的分支后缀拆出来，拼到 ABI 之后
   const assetVersion = version.replace(APP_VERSION_SUFFIX, '')
   const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}/${PACKAGE_NAME}-v${assetVersion}-${abi}${APP_VERSION_SUFFIX}.apk`
