@@ -306,6 +306,14 @@ function pruneMasterWorkflows() {
   }
 }
 
+/** 变体分支不需要 master 的同步脚本（只由 master 的工作流使用） */
+function pruneMasterScripts() {
+  // 只从索引移除，不删除工作区文件 —— 脚本自身正在 scripts/sync 下运行
+  const tracked = git('ls-files', 'scripts/sync').trim()
+  if (!tracked) return
+  git('rm', '-r', '-q', '--cached', 'scripts/sync')
+  console.log('从索引移除 master 专属脚本: scripts/sync')
+}
 /**
  * 合并完成后的统一归一化。
  * 即便某些文件没有冲突（git 自动合并成功），master 的定制也可能与分支定制
@@ -328,6 +336,7 @@ function normalizeAfterMerge() {
     }
   }
   pruneMasterWorkflows()
+  pruneMasterScripts()
 }
 
 // ------------------------------------------------------------------- 主流程
