@@ -100,15 +100,9 @@ export const storageDataPrefixOld = {
 export const APP_PROVIDER_NAME = 'com.luna.music.provider'
 
 // fork：分支版本号后缀。package.json 的 version 始终与上游同步，
-// 分支自身的发布版本号由「上游版本 + 后缀」组成（如 1.9.1-xiaomi），
+// 分支自身的发布版本号由「上游版本 + 后缀」组成（如 1.9.3-xiaomi），
 // 用于检查各自分支的更新；master 分支该常量为空字符串
 export const APP_VERSION_SUFFIX = '-xiaomi'
-export const APP_VERSION = `${version}${APP_VERSION_SUFFIX}`
-
-// fork：分支版本号后缀。package.json 的 version 始终与上游同步，
-// 分支自身的发布版本号由「上游版本 + 后缀」组成（如 1.9.1-xiaomi），
-// 用于检查各自分支的更新；master 分支该常量为空字符串
-export const APP_VERSION_SUFFIX = ''
 export const APP_VERSION = `${version}${APP_VERSION_SUFFIX}`
 
 export const NAV_MENUS = [
