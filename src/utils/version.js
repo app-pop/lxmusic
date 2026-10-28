@@ -4,12 +4,13 @@ import { downloadFile, stopDownload, temporaryDirectoryPath } from '@/utils/fs'
 import { getSupportedAbis, installApk } from '@/utils/nativeModules/utils'
 import { APP_PROVIDER_NAME } from '@/config/constant'
 
-// fork：检查更新只看自己的仓库；GitHub 仓库 slug 仍保持 package.json 的 name（lx-music-mobile）
+// fork：检查更新只看自己的仓库。仓库 slug 是 app-pop/lxmusic，
+// 不能用 package.json 的 name（那是 npm 包名 lx-music-mobile，对应仓库不存在）
 const FORK_OWNER = 'app-pop'
-const FORK_REPO = name
+const FORK_REPO = 'lxmusic'
+// APK 资产名用的包名（与构建脚本一致，来自 package.json 的 name）
+const PACKAGE_NAME = name
 const FORK_UPDATE_BRANCH = 'xiaomi'
-const RELEASE_TAG_SUFFIX = '-xiaomi'
-const RELEASE_ASSET_SUFFIX = '-xiaomi'
 
 const abis = [
   'arm64-v8a',
@@ -89,7 +90,9 @@ let apkSavePath
 
 export const downloadNewVersion = async(version, onDownload = noop) => {
   const abi = await getTargetAbi()
-  const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}${RELEASE_TAG_SUFFIX}/${FORK_REPO}-v${version}-${abi}${RELEASE_ASSET_SUFFIX}.apk`
+  // version 为分支发布版本号（如 1.9.1-xiaomi），已含后缀，不再重复拼接；
+  // 对应 Release tag v{version} 与资产名 {name}-v{version}-{abi}.apk
+  const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}/${PACKAGE_NAME}-v${version}-${abi}.apk`
   let savePath = temporaryDirectoryPath + '/lx-music-mobile.apk'
 
   if (downloadJobId) stopDownload(downloadJobId)
