@@ -2,7 +2,7 @@ import { httpGet } from '@/utils/request'
 import { name } from '../../package.json'
 import { downloadFile, stopDownload, temporaryDirectoryPath } from '@/utils/fs'
 import { getSupportedAbis, installApk } from '@/utils/nativeModules/utils'
-import { APP_PROVIDER_NAME } from '@/config/constant'
+import { APP_PROVIDER_NAME, APP_VERSION_SUFFIX } from '@/config/constant'
 
 // fork：检查更新只看自己的仓库。仓库 slug 是 app-pop/lxmusic，
 // 不能用 package.json 的 name（那是 npm 包名 lx-music-mobile，对应仓库不存在）
@@ -90,9 +90,11 @@ let apkSavePath
 
 export const downloadNewVersion = async(version, onDownload = noop) => {
   const abi = await getTargetAbi()
-  // version 为分支发布版本号（如 1.9.1-kugou），已含后缀，不再重复拼接；
-  // 对应 Release tag v{version} 与资产名 {name}-v{version}-{abi}.apk
-  const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}/${PACKAGE_NAME}-v${version}-${abi}.apk`
+  // version 为分支发布版本号（如 1.9.1-kugou），Release tag 即 v{version}；
+  // 但构建产物的 APK 名是 {name}-v{基础版本}-{abi}{后缀}.apk（后缀在 ABI 之后），
+  // 因此需要把版本号里的分支后缀拆出来，拼到 ABI 之后
+  const assetVersion = version.replace(APP_VERSION_SUFFIX, '')
+  const url = `https://github.com/${FORK_OWNER}/${FORK_REPO}/releases/download/v${version}/${PACKAGE_NAME}-v${assetVersion}-${abi}${APP_VERSION_SUFFIX}.apk`
   let savePath = temporaryDirectoryPath + '/lx-music-mobile.apk'
 
   if (downloadJobId) stopDownload(downloadJobId)
