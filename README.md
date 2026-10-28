@@ -17,7 +17,6 @@
 
 当前分支：**`netease`（网易云音乐版）**。版本号形如 `1.9.2-netease`，可与 master 主线共存安装；更新检查只读取本分支的 `publish/version.json`，不会串到其他版本。
 
-
 本仓库在 **[lyswhut/lx-music-mobile](https://github.com/lyswhut/lx-music-mobile)** 上游基础上，合并他人分支后做了功能与体验向的修改。**Release 与 Issue 请以本仓库为准**；上游更新可通过 `git remote add upstream …` 后自行 `fetch` / `merge`。
 
 ### 相对上游的主要改动
