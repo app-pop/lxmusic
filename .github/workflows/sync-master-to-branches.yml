@@ -103,6 +103,15 @@ jobs:
           BEFORE=$(git rev-parse HEAD)
 
           if git merge --no-edit --no-ff origin/master; then
+            # 无冲突也要归一化：master 与分支的定制可能在无冲突位置叠加
+            echo "::notice::合并成功，执行归一化"
+            if ! node scripts/sync/resolve.js "$BRANCH"; then
+              echo "::error::归一化失败，跳过该分支（需人工处理）"
+              exit 1
+            fi
+            if ! git diff --cached --quiet; then
+              git commit --no-verify -m "chore(sync): 合并 master 后归一化分支定制"
+            fi
             AFTER=$(git rev-parse HEAD)
             if [ "$BEFORE" = "$AFTER" ]; then
               echo "CHANGED=false" >> $GITHUB_ENV
