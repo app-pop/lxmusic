@@ -1,0 +1,149 @@
+name: Sync master -> variant branches
+
+# 把 master 的最新提交自动合并到 5 个变体分支（xiaomi / kugou / kuwo / netease / qqmusic），
+# 并保留各分支的自定义修改（包名、品牌、更新源、徽章、专属工作流）。
+#
+# 冲突处理：
+#   已知的 5 个文件由 scripts/sync/resolve.js 确定性解决，其余任何冲突都视为
+#   需要人工介入 —— 该分支标记失败并跳过，不影响其他分支。
+#   解决后用 scripts/sync/verify.js 校验分支定制是否完整，校验失败同样跳过。
+#
+# 触发方式：
+#   1) push 到 master
+#   2) workflow_dispatch：可指定分支列表、是否随后触发各自打包
+#
+# 关于自动触发打包：
+#   GITHUB_TOKEN 推送的 commit 不会再次触发其它 workflow，所以末尾显式调用
+#   release-<branch>.yml 的 workflow_dispatch。若配置了 secrets.SYNC_TOKEN
+#   （拥有 contents:write + actions:write 的 PAT），则优先使用该 token 推送，
+#   由 PAT 推送的 commit 会按正常用户事件触发打包。
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: '要同步的分支（逗号分隔，留空=全部）'
+        required: false
+        default: ''
+      run_release:
+        description: '同步后是否触发各分支打包'
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  # 计算要处理的分支矩阵
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+    steps:
+      - id: set
+        shell: bash
+        env:
+          INPUT_BRANCHES: ${{ github.event.inputs.branches }}
+        run: |
+          ALL="xiaomi kugou kuwo netease qqmusic"
+          if [ -n "$INPUT_BRANCHES" ]; then
+            LIST=""
+            for b in $(echo "$INPUT_BRANCHES" | tr ',' ' '); do
+              b=$(echo "$b" | tr -d ' ')
+              if echo " $ALL " | grep -q " $b "; then
+                LIST="$LIST $b"
+              else
+                echo "::warning::忽略未知分支 $b"
+              fi
+            done
+            ALL=$(echo $LIST)
+          fi
+          JSON=$(printf '%s\n' $ALL | jq -R . | jq -sc .)
+          echo "matrix={\"branch\":$JSON}" >> $GITHUB_OUTPUT
+          echo "将同步分支: $ALL"
+
+  sync:
+    name: Sync ${{ matrix.branch }}
+    needs: prepare
+    if: needs.prepare.outputs.matrix != '' && needs.prepare.outputs.matrix != '{"branch":[]}'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Check out ${{ matrix.branch }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Merge master
+        id: merge
+        env:
+          BRANCH: ${{ matrix.branch }}
+        run: |
+          set -uo pipefail
+          git fetch origin master
+          BEFORE=$(git rev-parse HEAD)
+
+          if git merge --no-edit --no-ff origin/master; then
+            AFTER=$(git rev-parse HEAD)
+            if [ "$BEFORE" = "$AFTER" ]; then
+              echo "CHANGED=false" >> $GITHUB_ENV
+              echo "已是最新，无需推送"
+            else
+              echo "CHANGED=true" >> $GITHUB_ENV
+            fi
+            exit 0
+          fi
+
+          # 出现冲突：尝试自动解决
+          echo "::notice::检测到冲突，尝试自动解决"
+          if node scripts/sync/resolve.js "$BRANCH"; then
+            git commit --no-edit
+            echo "CHANGED=true" >> $GITHUB_ENV
+            echo "冲突已自动解决"
+          else
+            echo "::error::自动解决失败，跳过该分支（需人工处理）"
+            git merge --abort || true
+            exit 1
+          fi
+
+      - name: Verify branch customizations
+        if: env.CHANGED == 'true'
+        env:
+          BRANCH: ${{ matrix.branch }}
+        run: |
+          if ! node scripts/sync/verify.js "$BRANCH"; then
+            echo "::error::分支定制校验失败，不推送（需人工处理）"
+            exit 1
+          fi
+
+      - name: Push to ${{ matrix.branch }}
+        if: env.CHANGED == 'true'
+        run: git push origin HEAD:${{ matrix.branch }}
+
+      - name: Trigger release workflow
+        if: env.CHANGED == 'true' && (github.event_name == 'push' || github.event.inputs.run_release == 'true')
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ matrix.branch }}
+        run: |
+          gh workflow run "release-${BRANCH}.yml" --ref "$BRANCH" \
+            || echo "::warning::调用 release-${BRANCH}.yml 失败，已跳过（可手动触发）"
