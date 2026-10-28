@@ -1,4 +1,4 @@
-import { version } from '../../../package.json'
+import { APP_VERSION } from '@/config/constant'
 
 export interface ProgressInfo {
   total: number
@@ -29,7 +29,7 @@ export interface InitState {
 const state: InitState = {
   showModal: false,
   versionInfo: {
-    version,
+    version: APP_VERSION,
     newVersion: null,
     showModal: false,
     reCheck: false,
